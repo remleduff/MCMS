@@ -35,12 +35,12 @@
 (deftemplate media-template "mcms/media-template.html" [collection]
   [:#add-media] (do-> (after (add-media-form "/media")))
   [:#search-media] (do-> (after (search-media-form "/search")))
-  [:#item] (content (map item collection)))
+  [:#item] (substitute (map item collection)))
 
 (deftemplate ranked-media-template "mcms/media-template.html" [collection rank]
   [:#add-media] (do-> (after (add-media-form "/media")))
   [:#search-media] (do-> (after (search-media-form "/search")))
-  [:#item] (content (map ranked-item collection rank)))
+  [:#item] (substitute (map ranked-item collection rank)))
 
 (defn count-item 
   ([isbn]
