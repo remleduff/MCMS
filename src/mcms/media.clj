@@ -111,7 +111,7 @@
   (let [cover-results (search-covers (get-in params [:cover :tempfile]))
 	text-results (search-text db (:query params))
 	media (if cover-results 
-		(clojure.set/join cover-results text-results)
+		(sort-by #(get % "rank") (clojure.set/join cover-results text-results))
 		text-results)
 	current-user (:current-user session)]
     (show-media db current-user media)))
