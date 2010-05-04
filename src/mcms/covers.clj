@@ -22,11 +22,6 @@
        (catch Throwable e
 	 (.printStackTrace e))))
 
-(defn search-cover [cover]
-  (let [histogram (compute-histogram (load-image cover))
-	pairs (fmap (partial do-compare-histograms histogram) @*cover-histograms*)]
-    (sort-by val (filter val pairs))))
-
 (defn read-cover-histograms []
   (let [covers-dir (File. *covers-dir*)
 	histogram-files (filter #(-> % (.getName) (.endsWith ".xml")) (.listFiles covers-dir))]
@@ -61,11 +56,15 @@
      (add-cover isbn cover)))
 
 (defn get-cover
-    ([isbn]
-        (.openStream (URL.  (str *library-thing-cover-url* isbn))))
-    ([isbn cover-params]
-        (let [cover (:tempfile cover-params)]
-            (if (.exists cover)
-                cover
-                (get-cover isbn)))))
+  ([isbn]
+     (.openStream (URL.  (str *library-thing-cover-url* isbn))))
+  ([isbn cover-params]
+     (let [cover (:tempfile cover-params)]
+       (if (.exists cover)
+	 cover
+	 (get-cover isbn)))))
 
+(defn search-cover [cover]
+  (let [histogram (compute-histogram (load-image cover))
+	pairs (fmap (partial do-compare-histograms histogram) @*cover-histograms*)]
+    pairs))

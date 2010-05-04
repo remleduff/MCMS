@@ -1,19 +1,50 @@
 <html>
   <head>
     <title class="collection">Media</title>
-    <link type="text/css" rel="stylesheet" href="index.css"></link>
+    <link type="text/css" rel="stylesheet" href="index.css"/>
+    <script type="text/javascript" src="toggle.js"/>
   </head>
   <body> 
-    <a class="current" href="Some User">Some User</a> <br> 
-	<a class="logout" href="/logout">LOG OUT</a>  <br>
-	<a class="library" href="/media">Library</a><br>
-	<a class="users" href="/users">Users</a>  <br>
-    <h1 id="add-media">Add</h2>  
-    <h1 id="search-media">Search</h2>
-    <h1 id="list">Collection</h2>
-    <table class="content"> 
-      <tr id="header"><td>ISBN</td><td>Title</td><td>Author</td><td>Cover</td></tr>
-      <tr id="item"><td><a class="isbn" href="/media/12345">Sample ISBN</a></td><td class="title">Sample Title</td><td class="author">Sample Author</td><td><img class="cover" href="/covers/12345"/></td><td class="rank"></td></tr>
-    </table>
+    <div id="nav">
+      <ul>
+	<li><a class="link" ref="somewhere">Some Link</a></li>
+	<li><a class="current link" href="Some User">Some User</a></li>
+	<li><a class="link" href="/logout">LOG OUT</a></li>
+	<li><a class="link" href="/media">Library</a></li>
+	<li><a class="link" href="/users">Users</a></li>
+	<li><a class="toggle" href="#" onclick="toggle_visibility('add-media');">Add items</a></li>
+	<li><a class="toggle" href="#" onclick="toggle_visibility('search-media');">Search</a></li>
+      </ul>
+    </div>
+    <div id="add-media" style="display:none"><h1>Add</h1></div>  
+    <div id="search-media" style="display:none"><h1>Search</h1></div>
+    <div id="list"><h1>Collection</h1>
+      <table class="content"> 
+	<tr id="tableheader">
+	  <td>ISBN</td>
+	  <td>Title</td>
+	  <td>Author</td>
+	  <td>Cover</td>
+	  <td class="rank">Rank</td>	  
+	  <td class="action"></td>
+	</tr>
+	<tr id="item">
+	  <td><a class="isbn" href="/media/12345">Sample ISBN</a></td>
+	  <td class="title">Sample Title</td>
+	  <td class="author">Sample Author</td>
+	  <td><a class="cover" href="/covers/12345"><img src="/covers/12345"/></a></td>
+	  <td class="rank"></td>
+	  <td class="action">
+	    <form method="post" id="delete" enctype="multipart/formdata">
+	      <input type="image" src="delete-icon.png" alt="Delete"/>
+	      <input type="hidden" name="_method" value="delete"/>
+	    </form>
+	    <form method="post" id="add" enctype="multipart/formdata">
+	      <input type="image" src="add-icon.png" alt="Add"/>
+	    </form>
+	  </td>
+	</tr>
+      </table>
+    </div>
   </body>
 </html>

@@ -32,16 +32,15 @@
     (actionPerformed [e]
         (if (.isVisible  frame)
           (do
-            #_(println (Thread/currentThread))
             (reset! image (.grab grabber))
             (process-image @image)
-		    (.clearMem storage)
+	    (.clearMem storage)
             (.repaint frame))            
           (do 
             (println "Done!")
             (.stop grabber)
             (-> e (.getSource) (.stop))
-            (deliver login-promise {:username "ltyou", :selected @*selected*}))))))
+            (deliver login-promise {:uid 1, :selected @*selected*}))))))
 
 (defn face-detect [db login-promise]
   (let [grabber (make-grabber)

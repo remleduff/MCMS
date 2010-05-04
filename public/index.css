@@ -1,4 +1,14 @@
-img { 
+/* Colorscheme from http://colorschemedesigner.com/#2P11TcO--w0w0 */
+
+#nav {
+    width: 10em;
+    background-color: #32A632;
+    text-align: right;
+/*    margin-left: auto; */
+    float: right;
+}
+
+.cover img { 
 width: autopx; 
 height: 200px 
 }
@@ -12,32 +22,50 @@ tr:nth-child(even) {
 }
 
 table {
+  width: 75%;
   margin-left: auto;
   margin-right: auto;
 }
 
-h2#list {
+h1, h2 {
+  width: 75%;
+  margin-left: auto;
+  margin-right: auto;
   text-align: center;
+  background-color: #C7FFC7;
 }
 
-
-tr#header {
-  background-color: gray;
+ul {
+  padding: 0;
+  margin: 0;
+}
+li {
+  list-style-type:none;
 }
 
+tr#tableheader {
+  background-color: #32A632;
+}
+
+#add-media, #search-media, #add-user, .login {
+  width: 75%;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #B3FFB3;
+}
 
 /* basic elements */
-html {
-	margin: 0;
-	padding: 0;
-	}
 body { 
 	font: 75% georgia, sans-serif;
 	line-height: 1.88889;
-	color: #555753; 
+	/* color: #555753; */
 	background: #fff url(blossoms.jpg) no-repeat bottom right; 
-	background-color: #32A632;
+	background-color: #86BF86;
 	margin: 0; 
+	padding: 0;
+	}
+html {
+	margin: 0;
 	padding: 0;
 	}
 p { 
@@ -58,7 +86,7 @@ a:link {
 a:visited { 
 	font-weight: bold; 
 	text-decoration: none; 
-	color: #D4CDDC;
+	color: #C3BCCB; /* #D4CDDC; */
 	}
 a:hover, a:active { 
 	text-decoration: underline; 

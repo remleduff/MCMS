@@ -1,14 +1,12 @@
 (ns mcms.login
   (:require [fleetdb.client :as fleetdb] [clojure.xml :as xml])
-  (:use [mcms media camera collection] 
+  (:use [mcms media nav camera collection] 
 	[compojure]
 	[clojure.contrib.duck-streams :only [copy]]
 	[net.cgrand.enlive-html])
   (:import [java.io File]
            [javax.swing SwingUtilities]))
   
-;(defonce *current-user* (atom nil))
-
 (defsnippet passwd-login-form "mcms/passwd-login.html" [:form]
   [destination]
   [:form] (set-attr :action destination))
@@ -18,10 +16,9 @@
   [:form] (set-attr :action destination))
 
 (deftemplate login-template "mcms/login-template.html" []
-  [:#passwd-logging] (do-> (after (passwd-login-form "/login-passwd")))
-  [:#face-detect] (do-> (after (face-detect-form "/login-face")))  
-  ;[:#item] (content (map item collection))
-  )
+  [:#nav] (substitute (nav nil nil nil))
+  [:#passwd-logging] (after (passwd-login-form "/login-passwd"))
+  [:#face-detect] (after (face-detect-form "/login-face")))
 
 (defn query-password 
   ([username]
@@ -34,19 +31,19 @@
   
 (defn show-loggedin [db {:keys [username selected]}]
   ;(println "Logged in" username) interferes!
-  #_(reset! *current-user* username)
+  ;(reset! *current-user* username)
   ; Return a vector containing new session and the html
   [(session-assoc :current-user username)
-  (redirect-to (str "/" username))#_(show-user-collection db username)])
+  (redirect-to (str "/" username))])
 
 ;(defn show-tolog [db]
 ;  (if #_(= @*current-user* nil) (= current-user nil)
 ;  (login-template)
 ;  #_(show-loggedin db @*current-user*) (show-loggedin db current-user))) 
 
-(defn show-tolog [session db]
-  (if (contains? session :current-user)
-    (show-loggedin db (:current-user session))
+(defn login [session db]
+  (if-let [current (session :current-user)]
+    (show-loggedin db current)
     (login-template)))
 
 (defn logout-user [session]
@@ -67,4 +64,4 @@
 (defn passwd-login [db username password]
   (if (check-passwd db username password)
     (show-loggedin db {:username username})
-    (show-tolog db)))
+    (login nil db)))

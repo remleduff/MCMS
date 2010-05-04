@@ -1,20 +1,31 @@
 (ns mcms.core
-  (:require [fleetdb.client :as fleetdb])
-  (:use [mcms covers media collection users entrez camera login]
+  (:require [fleetdb.client :as fleetdb]
+	    [net.cgrand.enlive-html :as enlive])
+  (:use [mcms covers media collection nav users entrez camera login]
 	[compojure]))
 
 (defonce *db* (atom nil))
 (defonce *app* (atom nil))
 
+(def pages 
+     {:root "/",
+      :media "/media",
+      :collection "/collection",
+      :users "/users"})
+
+(defn page [id] 
+  (pages id))
+
 (defroutes mcms-routes
   (GET "/"
-        (show-tolog session @*db*))
+        (login session @*db*))
   (POST "/login-face"
         (face-login @*db*))
   (POST "/login-passwd"
         (passwd-login @*db* (:username params) (:password params)))
   (GET "/logout"
-        (logout-user session))
+        (logout-user session)
+	(redirect-to (page :root)))
   (GET "/covers/:isbn"
        (serve-file "covers" (:isbn params)))
   (POST "/covers/:isbn"
@@ -22,21 +33,21 @@
   (GET "/media/:isbn"
        (show-item (first (get-media @*db* [(:isbn params)]))))
   (GET "/media"
-       (show-media (:current-user session) (get-media @*db*)))
+       (show-media @*db* (:current-user session)))
   (POST "/media"
 	(add-item @*db* params)
-	(show-media (:current-user session) (get-media @*db*)))
+	(redirect-to (page :media)))
   (POST "/search"
-	(let [search-results (search-cover (get-in params [:cover :tempfile]))]
-	  (show-media (:current-user session) (get-media @*db* (keys search-results)) (vals search-results))))
+	(search-media @*db* params session))
   (GET "/users"
        (show-users @*db*))
   (POST "/users"
 	(add-user-passwd @*db* (:username params) (:password params))
-	(show-users @*db*))
-  (POST "/:username" 
-	(add-to-collection @*db* (assoc params :username (:current-user session)))
-	(redirect-to (str "/" (:current-user session))))
+	(redirect-to (page :user)))
+  (POST "/:username"
+	(mod-collection @*db* session params))
+  (POST "/:username/:isbn"
+	(mod-collection @*db* session params))
   (GET "/:username"
        (show-user-collection @*db* (:current-user session) (:username params)))
   (GET "*"
@@ -44,8 +55,32 @@
   (ANY "*"
        [404 "Page Not Found"]))
 
+(defn add-to-body [html item]
+  (apply str 
+	 (enlive/emit* 
+	  (enlive/at (enlive/html-snippet html) 
+		     [:body] (enlive/append item)))))
+
+
+; (assoc response :body (str request (:body (apply str response))))
+
+(defn with-errors [handler]
+  (fn [request]
+    (let [response (handler request)]
+      (if-let [error (get-in request [:flash :error])]
+	(assoc response :body (add-to-body (:body response) error))
+	response))))
+
+(defn with-logging [handler]
+  (fn [request]
+    (let [response (handler request)]
+      (assoc response :body (add-to-body (:body response) request)))))
+
 (decorate mcms-routes (with-multipart))
+;(decorate mcms-routs (with-logging))
+(decorate mcms-routes (with-errors))
 (decorate mcms-routes (with-session :memory))
+
 
 ;; ========================================
 ;; The App

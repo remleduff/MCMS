@@ -1,6 +1,6 @@
 (ns mcms.users
   (:require [fleetdb.client :as fleetdb])
-  (:use [mcms collection db]
+  (:use [mcms collection db nav]
 	[compojure]
 	[clojure.contrib.duck-streams :only [copy]]
 	[net.cgrand.enlive-html])
@@ -17,15 +17,15 @@
   [:form] (set-attr :action destination))
 
 (deftemplate users-template "mcms/users-template.html" [users]
+  [:#nav] (substitute (nav nil nil nil))
   [:#item] (content (map user-template users))
-  [:#add-user] (do-> (after (user-form "/users")))
-  )
+  [:#add-user] (append (user-form "/users")))
 
 (defn get-user-id 
   ([username]
      ["select" "users" {"where" ["=" :name username]}])
   ([db username]
-     (get (first (db ["select" "users" {"where" ["=" :name username]}])) "id")))
+     (first (db ["select" "users" {"where" ["=" :name username] "only" "id"}]))))
 
 (defn users 
   ([]

@@ -1,15 +1,21 @@
 <html>
-  <head>
-    <title class="collection">Users </title>
-    <link type="text/css" rel="stylesheet" href="index.css"></link>
-  </head>
-  <body>
-	<a class="logout" href="/logout">LOG OUT</a> <br>
-	<a class="library" href="/media">Library</a><br>
-    <h2 id="add-user">Add</h2>
-    <h2 id="list">Users</h2>
-    <table class="content"> 
-      <tr id="item"><td><a class="user" href="/username">Sample Username</a></td></tr>
-    </table>
-  </body>
+	<head>
+		<title class="collection">Users </title>
+		<link type="text/css" rel="stylesheet" href="index.css"></link>
+	</head>
+	<body>
+		<div id="nav">
+			<a class="current" href="Some User">Some User</a><br> 
+			<a class="logout" href="/logout">LOG OUT</a><br>
+			<a class="library" href="/media">Library</a><br>
+			<a class="users" href="/users">Users</a><br>
+		</div>
+		<div id="add-user"><h2>Add</h2></div>
+		<div id="list">
+		  <h2>Users</h2>
+		  <table class="content"> 
+		    <tr id="item"><td><a class="user" href="/username">Sample Username</a></td></tr>
+		  </table>
+		</div>
+	</body>
 </html>
