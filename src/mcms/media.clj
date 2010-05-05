@@ -1,6 +1,6 @@
 (ns mcms.media
   (:require [fleetdb.client :as fleetdb] [clojure.xml :as xml])
-  (:use [mcms collection covers db entrez nav] 
+  (:use [mcms covers db entrez nav] 
 	[compojure]
 	[clojure.contrib.duck-streams :only [copy]]
 	[net.cgrand.enlive-html])

@@ -21,25 +21,12 @@
   [:#item] (content (map user-template users))
   [:#add-user] (append (user-form "/users")))
 
-(defn get-user-id 
-  ([username]
-     ["select" "users" {"where" ["=" :name username]}])
-  ([db username]
-     (first (db ["select" "users" {"where" ["=" :name username] "only" "id"}]))))
-
-(defn users 
-  ([]
-     ["select" "users"])
-  ([db]
-     (db (users))))
-
 ;(defn add-user
 ;  ([db username]
 ;     (db ["insert" "users" {:id (next-id db "users"), :name username}])))
 
-(defn add-user-passwd
-  ([db username password]
-     (db ["insert" "users" {:id (next-id db "users"), :name username :passwd password}])))
+(defn add-user-passwd [db username password]
+  (db ["insert" "users" {:id (next-id db "users"), :name username :passwd password}]))
      
 (defn show-users [db]
   (apply str (users-template (users db))))

@@ -15,11 +15,6 @@
   [:#item] (substitute (map (partial item current) (map #(assoc % :owned true) collection))))
 
 
-(defn get-owned [db username]
-  (let [uid (get-user-id db username)
-	isbns (map #(get % "isbn") (owned db uid))]
-    isbns))
-
 (defn user-collection [db username]   
   (get-media db (get-owned db username)))
 

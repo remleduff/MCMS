@@ -30,8 +30,6 @@
        (serve-file "covers" (:isbn params)))
   (POST "/covers/:isbn"
 	(add-cover (:isbn params) (get-in params [:cover :tempfile])))
-  (GET "/media/:isbn"
-       (show-item (first (get-media @*db* [(:isbn params)]))))
   (GET "/media"
        (show-media @*db* (:current-user session)))
   (POST "/media"
@@ -43,7 +41,8 @@
        (show-users @*db*))
   (POST "/users"
 	(add-user-passwd @*db* (:username params) (:password params))
-	(redirect-to (page :user)))
+	[(flash-assoc :message (str "Added user " (:username params))) 
+	 (redirect-to (page :users))])
   (POST "/:username"
 	(mod-collection @*db* session params))
   (POST "/:username/:isbn"
@@ -59,17 +58,20 @@
   (apply str 
 	 (enlive/emit* 
 	  (enlive/at (enlive/html-snippet html) 
-		     [:body] (enlive/append item)))))
+		     [:body] (enlive/prepend item)))))
 
 
 ; (assoc response :body (str request (:body (apply str response))))
 
-(defn with-errors [handler]
+(defn with-flash-message [handler]
   (fn [request]
     (let [response (handler request)]
-      (if-let [error (get-in request [:flash :error])]
-	(assoc response :body (add-to-body (:body response) error))
-	response))))
+      (or
+       (when-let [error (get-in request [:flash :error])]
+	 (assoc response :body (add-to-body (:body response) error)))
+       (when-let [message (get-in request [:flash :message])]
+	 (assoc response :body (add-to-body (:body response) message)))
+       response))))
 
 (defn with-logging [handler]
   (fn [request]
@@ -78,7 +80,7 @@
 
 (decorate mcms-routes (with-multipart))
 ;(decorate mcms-routs (with-logging))
-(decorate mcms-routes (with-errors))
+(decorate mcms-routes (with-flash-message))
 (decorate mcms-routes (with-session :memory))
 
 
