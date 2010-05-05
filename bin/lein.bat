@@ -10,9 +10,11 @@ rem and it should be copied on %CLOJURE_JAR% path
 set CLOJURE_VERSION=1.1.0
 set LEIN_VERSION=1.1.0
 
+set RUNPATH=%~dp0
+
 rem uncomment this and set paths explicitly 
-set LEIN_JAR=%UTIL%\lib\leiningen-%LEIN_VERSION%-standalone.jar
-set CLOJURE_JAR=%UTIL%\lib\clojure-%CLOJURE_VERSION%.jar
+set LEIN_JAR=%RUNPATH%\lib\leiningen-%LEIN_VERSION%-standalone.jar
+set CLOJURE_JAR=%RUNPATH%\lib\clojure-%CLOJURE_VERSION%.jar
 
 
 if "x%1" == "xself-install" goto NO_SELF_INSTALL
