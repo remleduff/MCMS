@@ -8,20 +8,14 @@
  :dev-dependencies [[leiningen/lein-swank "1.2.0-SNAPSHOT"]]
  :namespaces [mcms.core]
  :main-class mcms.core
- :native-path "OpenCV2.1/lib"
  :repositories {"dev.java.net" "http://download.java.net/maven/2/"})
 
 (ns leiningen.run-mcms
   (:use [leiningen.compile :only [eval-in-project]])
   (:import [java.io File]))
 
-(defn make-process [& args]
-  (ProcessBuilder. (into-array String args)))
-
 (defn run-mcms [project & args]
-  #_(let [process (make-process (.getCanonicalPath (File. "bin/lein.bat")) "run-db")]
-    (.directory process (File. "db"))
-    (.start process))
+  (System/setProperty "jna.library.path" "OpenCV2.1")
   (eval-in-project project
     `(do
        (require 'mcms.core)
