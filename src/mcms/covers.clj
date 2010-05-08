@@ -60,7 +60,7 @@
      (.openStream (URL.  (str *library-thing-cover-url* isbn))))
   ([isbn cover-params]
      (let [cover (:tempfile cover-params)]
-       (if (.exists cover)
+       (if (and cover (.exists cover))
 	 cover
 	 (get-cover isbn)))))
 
