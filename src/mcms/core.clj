@@ -55,7 +55,6 @@
     (let [response (handler request)]
       (or
        (when-let [error (get-in request [:flash :error])]
-	 (println "Hello")
 	 (assoc response :body (add-to-body (:body response) error)))
        (when-let [message (get-in request [:flash :message])]
 	 (assoc response :body (add-to-body (:body response) message)))
@@ -65,7 +64,7 @@
   (fn [request]
     (try (handler request)
 	 (catch Throwable e
-	     (println e)
+	     (.printStackTrace e)
 	     (response/create-response request 
 				       [(flash-assoc :error (.getMessage e)) 
 					(redirect-to (or (get-in request [:headers "referer"]) "/"))])))))
