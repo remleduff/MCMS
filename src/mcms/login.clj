@@ -22,9 +22,9 @@
 
 (defn query-password 
   ([username]
-        ["select" "users" {"where" ["=" :name username]}])
+        ["select" "users" {"where" ["=" :name username] "only" "passwd"}])
   ([db username]
-        (get (first (db (query-password username))) "passwd")))
+     (first (db (query-password username)))))
 
 (defn check-passwd [db username password]
   (= password (query-password db username)))
@@ -42,7 +42,7 @@
 ;  #_(show-loggedin db @*current-user*) (show-loggedin db current-user))) 
 
 (defn login [session db]
-  (if-let [current (session :current-user)]
+  (if-let [current (:current-user session)]
     (show-loggedin db current)
     (login-template)))
 
@@ -50,7 +50,7 @@
   #_(reset! *current-user* nil)
   (if (contains? session :current-user)
     [(session-dissoc :current-user)
-    (login-template)]))
+    (redirect-to "/")]))
   
 (defn get-detect-result [db]
   (let [login-promise (promise)]
@@ -64,4 +64,5 @@
 (defn passwd-login [db username password]
   (if (check-passwd db username password)
     (show-loggedin db {:username username})
-    (login nil db)))
+    [(flash-assoc :error "Bad login info")
+     (redirect-to "/")]))

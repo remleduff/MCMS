@@ -25,8 +25,16 @@
 ;  ([db username]
 ;     (db ["insert" "users" {:id (next-id db "users"), :name username}])))
 
+(defn- count-users [db username]
+  (db ["count" "users" {"where" ["=" "name" username]}]))
+
 (defn add-user-passwd [db username password]
-  (db ["insert" "users" {:id (next-id db "users"), :name username :passwd password}]))
+  (valid not-empty "Invalid user" username)
+  (valid not-empty "Invalid password" password)
+  (valid #(= (count-users db %) 0) "User already exists!" username)
+  (db ["insert" "users" {:id (next-id db "users"), :name username :passwd password}])
+  [(flash-assoc :message (str "Added user " username)) 
+   (redirect-to (page :users))])
      
 (defn show-users [db]
   (apply str (users-template (users db))))
