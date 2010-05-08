@@ -16,8 +16,8 @@
   [destination]
   [:form] (set-attr :action destination))
 
-(deftemplate users-template "mcms/users-template.html" [users]
-  [:#nav] (substitute (nav nil nil nil))
+(deftemplate users-template "mcms/users-template.html" [current users]
+  [:#nav] (substitute (nav current nil nil))
   [:#item] (content (map user-template users))
   [:#add-user] (append (user-form "/users")))
 
@@ -36,5 +36,5 @@
   [(flash-assoc :message (str "Added user " username)) 
    (redirect-to (page :users))])
      
-(defn show-users [db]
-  (apply str (users-template (users db))))
+(defn show-users [db current]
+  (apply str (users-template current (users db))))

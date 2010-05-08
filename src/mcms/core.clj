@@ -29,7 +29,7 @@
   (POST "/search"
 	(search-media @*db* params session))
   (GET "/users"
-       (show-users @*db*))
+       (show-users @*db* (:current-user session)))
   (POST "/users"
 	(add-user-passwd @*db* (:username params) (:password params)))
   (POST "/:username"
