@@ -11,12 +11,26 @@
  :repositories {"dev.java.net" "http://download.java.net/maven/2/"})
 
 (ns leiningen.run-mcms
-  (:use [leiningen.compile :only [eval-in-project]])
+  (:use [leiningen.compile :only [eval-in-project]]
+	[clojure.contrib.java-utils :only [file]]
+	[clojure.contrib.duck-streams :only [reader]])
   (:import [java.io File]))
 
+(defn run-process [working-dir & args]
+  (let [process-builder (doto (ProcessBuilder. (into-array String args)) 
+			  (.directory (File. working-dir)))
+	process (.start process-builder)
+	runtime (Runtime/getRuntime)]
+    (.addShutdownHook runtime (Thread. #(.destroy process)))
+    (println (.readLine (reader (.getInputStream process))))))
+
+(def java (.getCanonicalPath (file (System/getProperty "java.home") "bin" "java")))
+
 (defn run-mcms [project & args]
-  (System/setProperty "jna.library.path" "OpenCV2.1")
+  #_(run-process "db" java "-cp" "lib/*" "fleetdb.server" "-f" "db.fdb")
+  (System/setProperty "jna.library.path" "OpenCV2.1/bin")
   (eval-in-project project
     `(do
        (require 'mcms.core)
-       (mcms.core/start-app))))
+       (mcms.core/start-app)
+       (println "Ready!"))))
